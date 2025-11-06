@@ -51,4 +51,17 @@ module.exports = [
       },
     },
   },
+  {
+    files: ['server.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-undef': 'off', // Disable no-undef for Node.js globals
+    },
+  },
 ];

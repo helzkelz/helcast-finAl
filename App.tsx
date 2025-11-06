@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import GameOverScreen from './components/GameOverScreen';
 import GameUI from './components/GameUI';
+import Lobby from './components/Lobby';
 import { useGameLogic } from './hooks/useGameLogic';
+import { MultiplayerProvider, useMultiplayer } from './hooks/useMultiplayer';
 
 // Helper to determine if running locally
 const isLocalDev = () => {
@@ -13,14 +15,41 @@ const isLocalDev = () => {
 // Discord SDK logic separated for clarity
 let DiscordSDK: unknown = undefined;
 if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-  // @ts-expect-error Discord SDK types are not available in development
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   DiscordSDK = require('@discord/embedded-app-sdk').DiscordSDK;
 }
 
+const GameApp: React.FC = () => {
+  const { currentRoom } = useMultiplayer();
+  const gameLogic = useGameLogic();
+
+  // Show lobby if not in a game room or game hasn't started
+  if (!currentRoom || currentRoom.gameState === 'LOBBY') {
+    return <Lobby onGameStart={() => {}} />;
+  }
+
+  // Show game if room exists and game is playing
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+    >
+      <GameUI logic={gameLogic} />
+      {gameLogic.gameState === 'GAME_OVER' && (
+        <GameOverScreen
+          players={gameLogic.players}
+          onPlayAgain={gameLogic.playAgain}
+        />
+      )}
+    </motion.div>
+  );
+};
+
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState(isLocalDev());
-  const discordSdk = DiscordSDK ? new (DiscordSDK as any)('1414340248741351527') : null; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const discordSdk = useMemo(() => DiscordSDK ? new (DiscordSDK as any)('1414340248741351527') : null, []); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   useEffect(() => {
     if (isLocalDev()) {
@@ -62,57 +91,25 @@ const App: React.FC = () => {
     setupDiscordSdk();
   }, [discordSdk]);
 
-
-  const gameLogic = useGameLogic();
-  const { gameState, players, startGame, playAgain } = gameLogic;
-
-  const renderContent = () => {
-    if (!authenticated) {
-      return <div className="text-white">Loading Discord SDK...</div>;
-    }
-    switch (gameState) {
-      case 'LOBBY':
-        return (
-          <div className="text-center">
-            <motion.h1 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-6xl font-black text-coral mb-4"
-            >
-              HELCAST
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl text-white mb-8"
-            >
-              The Ultimate Word Challenge
-            </motion.p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={startGame}
-              className="bg-coral text-dark-bg font-bold py-4 px-10 rounded-lg text-2xl shadow-lg hover:bg-coral-bright transition-colors"
-            >
-              Start Classic Game
-            </motion.button>
-          </div>
-        );
-      case 'PLAYING':
-        return <GameUI logic={gameLogic} />;
-      case 'GAME_OVER':
-        return <GameOverScreen players={players} onPlayAgain={playAgain} />;
-      default:
-        return null;
-    }
-  };
+  if (!authenticated) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral mx-auto mb-4"></div>
+          <p className="text-white text-lg">Authenticating...</p>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
-    <main className="bg-dark-bg text-white min-h-screen w-full flex items-center justify-center p-4 no-select">
-      {renderContent()}
-    </main>
+    <MultiplayerProvider>
+      <GameApp />
+    </MultiplayerProvider>
   );
 };
 

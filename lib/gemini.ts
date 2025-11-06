@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from '@google/genai';
 
 const API_KEY = process.env.API_KEY;
@@ -6,7 +5,14 @@ if (!API_KEY) {
   console.error('API_KEY environment variable not set.');
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY, vertexai: true });
+let ai: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!ai) {
+    ai = new GoogleGenAI({ apiKey: API_KEY, vertexai: true });
+  }
+  return ai;
+};
 
 // Simple in-memory cache to avoid re-validating the same words
 const wordValidationCache = new Map<string, boolean>();
@@ -20,7 +26,8 @@ export const isValidWord = async (word: string): Promise<boolean> => {
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    const response = await aiInstance.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: {
             role: 'user',
@@ -31,7 +38,7 @@ export const isValidWord = async (word: string): Promise<boolean> => {
             thinkingConfig: { thinkingBudget: 0 }
         }
     });
-    
+
     const result = response.text.trim().toLowerCase() === 'yes';
     wordValidationCache.set(upperCaseWord, result);
     return result;
