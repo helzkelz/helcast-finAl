@@ -1,59 +1,54 @@
-const js = require('@eslint/js');// eslint.config.js
-
-const globals = require('globals');const js = require('@eslint/js');
-
+const js = require('@eslint/js');
 const globals = require('globals');
+const react = require('eslint-plugin-react');
+const reactHooks = require('eslint-plugin-react-hooks');
+const tseslint = require('@typescript-eslint/eslint-plugin');
+const tsparser = require('@typescript-eslint/parser');
 
 module.exports = [
-
-  js.configs.recommended,module.exports = [
-
-  {  js({
-
-    files: ['**/*.ts', '**/*.tsx'],    files: ['**/*.ts', '**/*.tsx'],
-
-    languageOptions: {    languageOptions: {
-
-      parser: require.resolve('@typescript-eslint/parser'),      globals: {
-
-      parserOptions: {        ...globals.browser,
-
-        ecmaVersion: 'latest',        ...globals.node,
-
-        sourceType: 'module',      },
-
-        ecmaFeatures: { jsx: true },      parserOptions: {
-
-      },        ecmaVersion: 'latest',
-
-      globals: {        sourceType: 'module',
-
-        ...globals.browser,        ecmaFeatures: { jsx: true },
-
-        ...globals.node,      },
-
-      },    },
-
-    },    rules: {
-
-    plugins: {      semi: ['error', 'always'],
-
-      '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),      quotes: ['error', 'single'],
-
-      react: require('eslint-plugin-react'),      'no-unused-vars': 'warn',
-
-    },      'react/jsx-uses-react': 'off',
-
-    rules: {      'react/react-in-jsx-scope': 'off',
-
-      semi: ['error', 'always'],    },
-
-      quotes: ['error', 'single'],  }),
-
-      'no-unused-vars': 'warn',];
-
+  js.configs.recommended,
+  {
+    ignores: ['dist/**', 'node_modules/**'],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      '@typescript-eslint': tseslint,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      ...react.configs.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
+      'semi': ['error', 'always'],
+      'quotes': ['error', 'single'],
+      'no-unused-vars': 'warn',
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+  {
+    files: ['*.config.js', 'eslint.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
     },
   },
 ];

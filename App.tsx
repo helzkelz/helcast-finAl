@@ -1,5 +1,3 @@
-
-
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import GameOverScreen from './components/GameOverScreen';
@@ -13,20 +11,20 @@ const isLocalDev = () => {
 };
 
 // Discord SDK logic separated for clarity
-const getDiscordSdk = () => {
-  if (typeof window === 'undefined' || isLocalDev()) return null;
-  // @ts-ignore
-  const { DiscordSDK } = require('@discord/embedded-app-sdk');
-  return new DiscordSDK('1414340248741351527');
-};
-
+let DiscordSDK: unknown = undefined;
+if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+  // @ts-expect-error Discord SDK types are not available in development
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  DiscordSDK = require('@discord/embedded-app-sdk').DiscordSDK;
+}
 
 const App: React.FC = () => {
   const [authenticated, setAuthenticated] = useState(isLocalDev());
-  const discordSdk = getDiscordSdk();
+  const discordSdk = DiscordSDK ? new (DiscordSDK as any)('1414340248741351527') : null; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   useEffect(() => {
     if (isLocalDev()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAuthenticated(true);
       return;
     }

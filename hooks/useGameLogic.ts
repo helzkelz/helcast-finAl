@@ -91,7 +91,7 @@ export const useGameLogic = () => {
         return updatedPlayers;
     });
     
-    setFoundWords(prev => [{ word: `BOT WORD`, score: randomScore, bonuses: [] }, ...prev]);
+    setFoundWords(prev => [{ word: 'BOT WORD', score: randomScore, bonuses: [] }, ...prev]);
     
     setTimeout(advanceTurn, 500); // Give a moment for tile animation before next turn
   }, [gameState, players, currentPlayerIndex, advanceTurn, updateGridWithFallingTiles]);

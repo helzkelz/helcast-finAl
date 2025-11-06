@@ -14,7 +14,7 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({ players, onPlayAgain })
   const [copied, setCopied] = useState(false);
 
   const handleShare = useCallback(() => {
-    const title = "HELCAST Word Game - Final Results!\n";
+    const title = 'HELCAST Word Game - Final Results!\n';
     const rankings = players.map((p, i) => {
         const medal = i === 0 ? '🏆' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
         return `${medal} ${p.name} - ${p.score} pts`;

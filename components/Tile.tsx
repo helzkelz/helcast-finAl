@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TileData } from '../types';
@@ -9,13 +8,13 @@ interface TileProps {
   isSelected: boolean;
 }
 
-const Tile = React.forwardRef<HTMLDivElement, TileProps>(({ tile, isSelected }, ref) => {
+const Tile = React.forwardRef<HTMLDivElement, TileProps>(function Tile({ tile, isSelected }, ref) {
   const { letter, multiplier } = tile;
   const score = LETTER_SCORES[letter] || 0;
 
-  const baseClasses = "relative w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center rounded-lg cursor-pointer transition-all duration-200 no-select";
-  const selectedClasses = "bg-coral-bright ring-2 ring-coral-bright shadow-[0_0_15px_rgba(255,138,117,0.9)] scale-110 z-10";
-  const defaultClasses = "bg-coral text-dark-bg shadow-lg hover:scale-105";
+  const baseClasses = 'relative w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center rounded-lg cursor-pointer transition-all duration-200 no-select';
+  const selectedClasses = 'bg-coral-bright ring-2 ring-coral-bright shadow-[0_0_15px_rgba(255,138,117,0.9)] scale-110 z-10';
+  const defaultClasses = 'bg-coral text-dark-bg shadow-lg hover:scale-105';
 
   const multiplierClasses: { [key: string]: string } = {
     'DL': 'bg-teal text-white',
@@ -43,5 +42,7 @@ const Tile = React.forwardRef<HTMLDivElement, TileProps>(({ tile, isSelected }, 
     </motion.div>
   );
 });
+
+Tile.displayName = 'Tile';
 
 export default Tile;

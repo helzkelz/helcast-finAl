@@ -77,7 +77,7 @@ const GameUI: React.FC<GameUIProps> = ({ logic }) => {
         
         <div className="h-12 w-full text-center p-2 flex items-center justify-center bg-dark-bg rounded-lg">
             <p className={`text-xl font-bold ${isMyTurn ? 'text-coral animate-pulse' : 'text-gray-400'}`}>
-                {isMyTurn ? "Your Turn!" : `${currentPlayer?.name}'s Turn...`}
+                {isMyTurn ? 'Your Turn!' : `${currentPlayer?.name}'s Turn...`}
             </p>
         </div>
         

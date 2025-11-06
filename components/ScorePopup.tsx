@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { ScorePopupInfo } from '../types';
 
@@ -10,6 +9,7 @@ const ScorePopup: React.FC<ScorePopupProps> = ({ popups }) => {
   const [visiblePopups, setVisiblePopups] = useState<ScorePopupInfo[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisiblePopups(popups);
     const timer = setTimeout(() => {
       setVisiblePopups([]);

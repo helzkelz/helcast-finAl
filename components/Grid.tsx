@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TileData } from '../types';
 import Tile from './Tile';
@@ -7,8 +6,10 @@ import { GRID_SIZE } from '../constants';
 
 interface GridProps {
   gridData: TileData[];
+  // eslint-disable-next-line no-unused-vars
   onWordSubmit: (tiles: TileData[]) => void;
   disabled: boolean;
+  // eslint-disable-next-line no-unused-vars
   onWordChange: (word: string) => void;
 }
 
@@ -18,13 +19,9 @@ const GAP_SIZE = 12; // Corresponds to sm:gap-3
 const Grid: React.FC<GridProps> = ({ gridData, onWordSubmit, disabled, onWordChange }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTiles, setSelectedTiles] = useState<TileData[]>([]);
-  const [path, setPath] = useState('');
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
+  const path = useMemo(() => {
     if (selectedTiles.length < 2) {
-      setPath('');
-      return;
+      return '';
     }
     const points = selectedTiles.map(tile => {
       const row = Math.floor(tile.id / GRID_SIZE);
@@ -33,8 +30,9 @@ const Grid: React.FC<GridProps> = ({ gridData, onWordSubmit, disabled, onWordCha
       const y = row * (TILE_SIZE + GAP_SIZE) + TILE_SIZE / 2;
       return `${x},${y}`;
     }).join(' ');
-    setPath(points);
+    return points;
   }, [selectedTiles]);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const getTileFromEvent = (e: React.MouseEvent | React.TouchEvent): HTMLElement | null => {
     const point = 'touches' in e ? e.touches[0] : e;

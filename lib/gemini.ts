@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 
 const API_KEY = process.env.API_KEY;
 if (!API_KEY) {
-  console.error("API_KEY environment variable not set.");
+  console.error('API_KEY environment variable not set.');
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY, vertexai: true });
