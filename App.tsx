@@ -1,16 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useGameLogic } from './hooks/useGameLogic';
-import GameUI from './components/GameUI';
-import GameOverScreen from './components/GameOverScreen';
-import { motion } from 'framer-motion';
-import { DiscordSDK } from '@discord/embedded-app-sdk';
 
-const discordSdk = new DiscordSDK('1414340248741351527');
+
+import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import GameOverScreen from './components/GameOverScreen';
+import GameUI from './components/GameUI';
+import { useGameLogic } from './hooks/useGameLogic';
+
+// Helper to determine if running locally
+const isLocalDev = () => {
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+};
+
+// Discord SDK logic separated for clarity
+const getDiscordSdk = () => {
+  if (typeof window === 'undefined' || isLocalDev()) return null;
+  // @ts-ignore
+  const { DiscordSDK } = require('@discord/embedded-app-sdk');
+  return new DiscordSDK('1414340248741351527');
+};
+
 
 const App: React.FC = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(isLocalDev());
+  const discordSdk = getDiscordSdk();
 
   useEffect(() => {
+    if (isLocalDev()) {
+      setAuthenticated(true);
+      return;
+    }
+    if (!discordSdk) return;
     async function setupDiscordSdk() {
       await discordSdk.ready();
       console.log('Discord SDK is ready');
@@ -41,9 +61,9 @@ const App: React.FC = () => {
 
       setAuthenticated(true);
     }
-
     setupDiscordSdk();
-  }, []);
+  }, [discordSdk]);
+
 
   const gameLogic = useGameLogic();
   const { gameState, players, startGame, playAgain } = gameLogic;
@@ -52,7 +72,6 @@ const App: React.FC = () => {
     if (!authenticated) {
       return <div className="text-white">Loading Discord SDK...</div>;
     }
-
     switch (gameState) {
       case 'LOBBY':
         return (
