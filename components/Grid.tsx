@@ -1,8 +1,8 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { GRID_SIZE } from '../constants';
 import { TileData } from '../types';
 import Tile from './Tile';
-import { GRID_SIZE } from '../constants';
 
 interface GridProps {
   gridData: TileData[];

@@ -1,7 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { TileData } from '../types';
+import React from 'react';
 import { LETTER_SCORES } from '../constants';
+import { TileData } from '../types';
 
 interface TileProps {
   tile: TileData;
