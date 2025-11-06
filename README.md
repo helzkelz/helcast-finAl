@@ -1,5 +1,7 @@
-
 # Helcast Word Game
+
+[![CI/CD](https://github.com/helzkelz/helcast-finAl/actions/workflows/ci.yml/badge.svg)](https://github.com/helzkelz/helcast-finAl/actions/workflows/ci.yml)
+[![Deployed on Railway](https://railway.app/button)](https://railway.app)
 
 A fast-paced, drag-and-release word finding game built with React, TypeScript, and Tailwind CSS. This project features a sleek dark and coral theme, real-time scoring, and dynamic gameplay.
 
