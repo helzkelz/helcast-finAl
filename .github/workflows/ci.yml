@@ -30,7 +30,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy to Railway
-        uses: railwayapp/railway-deploy-action@v1.2.9
-        with:
-          railwayToken: ${{ secrets.RAILWAY_TOKEN }}
+      # Railway deployment disabled - use Railway's platform or CLI for deployment
+      # The railwayapp/railway-deploy-action does not exist
+      # See DEPLOYMENT.md for deployment instructions
+      #      - name: Deploy to Railway
+#              uses: railwayapp/railway-deploy-action@v1.2.9
+        #      with:
+          #        railwayToken: ${{ secrets.RAILWAY_TOKEN }}
