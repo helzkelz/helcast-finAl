@@ -7,12 +7,12 @@ interface MultiplayerContextType {
   currentRoom: GameRoom | null;
   chatMessages: ChatMessage[];
   isConnected: boolean;
-  joinRoom: (roomId: string, playerName: string) => void;
+  joinRoom: (_roomId: string, _playerName: string) => void;
   leaveRoom: () => void;
-  sendMessage: (message: string) => void;
-  setPlayerReady: (ready: boolean) => void;
+  sendMessage: (_message: string) => void;
+  setPlayerReady: (_ready: boolean) => void;
   startGame: () => void;
-  submitWord: (word: string, path: number[]) => void;
+  submitWord: (_word: string, _path: number[]) => void;
 }
 
 const MultiplayerContext = createContext<MultiplayerContextType | null>(null);
