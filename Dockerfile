@@ -1,31 +1,36 @@
-# Stage 1: Build the React application
-FROM node:20 AS builder
+# Dockerfile for Helcast Word Game
+# Note: Railway.app can auto-detect and deploy Node.js applications without Docker
+# This Dockerfile is provided as an alternative deployment method
+
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./ 
+COPY package*.json ./
 
-# Install all dependencies with retry logic
-RUN npm install --verbose || npm install --verbose || npm install --verbose --legacy-peer-deps
+# Install dependencies
+RUN npm ci || npm install
 
-# Copy source files
+# Copy source
 COPY . .
 
-# Build the application
+# Build application
 RUN npm run build
 
-# Stage 2: Serve the application with a lightweight Node.js server
-FROM node:20-slim
+# Production image
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy only the necessary files from the builder stage
+# Copy built application
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/server.js .
-COPY --from=builder /app/package.json .
+COPY --from=builder /app/package*.json ./
+COPY server.js ./
 
 EXPOSE 8080
+
+ENV NODE_ENV=production
 
 CMD ["node", "server.js"]
